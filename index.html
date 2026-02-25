@@ -293,24 +293,48 @@
       transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
     }
 
+    /* Single unified hover rule — lifts button and applies glow */
     .social-btn:hover {
-      transform: translateY(-4px);    /* lifts the button on hover */
+      transform: translateY(-4px);         /* lifts the button on hover */
       box-shadow: 0 12px 30px rgba(0,0,0,0.4);
-    }
-
-    /* Platform-specific accent colors on hover */
-    .social-btn.youtube  { --accent: #ff0000; }
-    .social-btn.facebook { --accent: #1877f2; }
-    .social-btn.twitter  { --accent: #1da1f2; }
-
-    .social-btn:hover {
       background: rgba(255,255,255,0.1);
       border-color: var(--accent);
       color: var(--accent);
     }
 
+    /* Platform-specific accent colors applied on hover via --accent variable */
+    .social-btn.youtube  { --accent: #ff0000; }
+    .social-btn.facebook { --accent: #1877f2; }
+    .social-btn.twitter  { --accent: #1da1f2; }
+
     .social-btn i {
       font-size: 1.2rem;
+    }
+
+    /* ======================================================
+       TABLE SCROLL WRAPPER
+       Allows the table to scroll horizontally on ALL screen
+       sizes where it's too wide to fit. Works on mobile,
+       tablet, and even small desktop windows.
+       overflow-x: auto = show horizontal scrollbar only when needed
+       -webkit-overflow-scrolling: touch = smooth swipe on iOS
+    ====================================================== */
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 8px;
+    }
+
+    /* Scroll hint — hidden by default, shown on mobile via JS */
+    .scroll-hint {
+      display: none;
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-align: right;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+      font-style: italic;
     }
 
     /* ======================================================
@@ -402,30 +426,9 @@
         border-radius: 12px;
       }
 
-      /* ── RESPONSIVE TABLE TECHNIQUE ──
-         On very small screens, a 6-column table can overflow.
-         We use the "scroll container" approach:
-         - The .table-scroll div gets overflow-x: auto
-         - This lets the user swipe left/right on the table
-         - The table itself keeps its minimum readable width
-         This is the most common real-world technique used by
-         sites like BBC Sport, Sky Sports, etc.
-      */
-      .table-scroll {
-        overflow-x: auto;                   /* enable horizontal scroll */
-        -webkit-overflow-scrolling: touch;  /* smooth scroll on iOS */
-        border-radius: 8px;
-      }
-
-      /* Hint text telling user they can scroll */
+      /* Show the scroll hint on mobile */
       .scroll-hint {
-        display: block;   /* show only on mobile */
-        font-size: 0.7rem;
-        color: var(--muted);
-        text-align: right;
-        margin-bottom: 8px;
-        letter-spacing: 1px;
-        font-style: italic;
+        display: block;
       }
 
       table {
@@ -693,6 +696,4 @@
         </a>
 
       </div>
-    </div><!-- /.social-section -->
-
-    <!-- ==================== FOOTER ==================== -
+    </div><!-- /.social-se
