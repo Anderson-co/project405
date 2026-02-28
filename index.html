@@ -1,699 +1,205 @@
 <!DOCTYPE html>
-<!--
-  ============================================================
-  CSC 405 PROJECT - Premier League Top 6 Table
-  Author: CSC 405 Student
-  Description: A styled HTML page featuring:
-    - A 6-column, 2-row Premier League table
-    - Blurred background effect
-    - Centered layout using CSS margin
-    - Social media links (YouTube, Facebook, Twitter)
-  ============================================================
--->
 <html lang="en">
-
 <head>
-  <!-- Page title shown on browser tab -->
-  <title>CSC 405 Project</title>
-
-  <!-- Tells the browser to use modern character encoding -->
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Google Fonts: Bebas Neue for headings, Barlow for body -->
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600&display=swap" rel="stylesheet" />
-
-  <!-- Font Awesome for social media icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
-  <style>
-    /* ======================================================
-       CSS RESET & ROOT VARIABLES
-       - Removes default browser spacing
-       - Defines a consistent color palette using variables
-    ====================================================== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    :root {
-      --green:   #00ff87;
-      --dark:    #0b0f1a;
-      --card-bg: rgba(10, 16, 35, 0.72);
-      --border:  rgba(0, 255, 135, 0.25);
-      --text:    #e8eaf6;
-      --muted:   #7986cb;
-    }
-
-    /* ======================================================
-       BODY & BACKGROUND
-       - Sets full-page background image
-       - background-attachment: fixed keeps the image still
-         while content scrolls (parallax-lite effect)
-       - The blur effect is applied via a pseudo-element
-         so it doesn't blur the content itself
-    ====================================================== */
-    body {
-      font-family: 'Barlow', sans-serif;
-      color: var(--text);
-      min-height: 100vh;
-      position: relative;
-      overflow-x: hidden;
-
-      /* Center all block-level children automatically */
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* The blurred background image sits BEHIND all content */
-    body::before {
-      content: "";
-      position: fixed;            /* stays in place on scroll */
-      inset: 0;                   /* covers the entire viewport */
-      background-image: url('https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1600');
-      background-size: cover;
-      background-position: center;
-
-      /* ➤ This is the BLUR effect requirement (ii) */
-      filter: blur(6px) brightness(0.35);
-
-      z-index: -1;                /* push it behind everything */
-    }
-
-    /* ======================================================
-       PAGE WRAPPER
-       - max-width + margin: auto centers the content block
-         (Requirement iii — aligning at center with CSS margin)
-    ====================================================== */
-    .wrapper {
-      width: 92%;
-      max-width: 1100px;
-
-      /* ➤ margin: auto is the CSS trick that horizontally
-         centers a block element inside its parent */
-      margin: 0 auto;
-
-      padding: 40px 0 60px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 40px;
-    }
-
-    /* ======================================================
-       HEADER SECTION
-       - Large decorative heading "CSC 405" (Requirement: head)
-       - Subtitle / tagline below
-    ====================================================== */
-    header {
-      text-align: center;
-    }
-
-    /* Decorative top label */
-    header .eyebrow {
-      font-size: 0.8rem;
-      letter-spacing: 6px;
-      text-transform: uppercase;
-      color: var(--green);
-      margin-bottom: 12px;
-    }
-
-    /* Main heading — Requirement: head = "CSC 405" */
-    header h1 {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(4rem, 12vw, 9rem);  /* scales with screen size */
-      line-height: 0.9;
-      letter-spacing: 4px;
-      color: #fff;
-
-      /* Green glow text-shadow for visual punch */
-      text-shadow:
-        0 0 30px rgba(0,255,135,0.5),
-        0 0 80px rgba(0,255,135,0.2);
-    }
-
-    header p {
-      margin-top: 16px;
-      font-size: 1rem;
-      color: var(--muted);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    /* ======================================================
-       CARD CONTAINER
-       - Glassmorphism card that wraps the table
-       - backdrop-filter applies blur to whatever is BEHIND
-         the card element (secondary blur layer)
-    ====================================================== */
-    .card {
-      width: 100%;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 32px;
-
-      /* Frosted glass effect using backdrop-filter */
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-
-      box-shadow: 0 8px 60px rgba(0,0,0,0.5);
-    }
-
-    .card-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.6rem;
-      letter-spacing: 3px;
-      color: var(--green);
-      margin-bottom: 20px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 12px;
-    }
-
-    /* ======================================================
-       TABLE STYLES
-       Requirement (i):
-         - 6 columns: Rank, Club, W, D, L, Points
-         - 2 data rows (rows for the 6 clubs are achieved by
-           having ONE header row + SIX data rows, but the
-           question specifically says "6 columns and 2 rows"
-           which is interpreted as header row + data rows
-           showing the top 6 clubs)
-         NOTE: To strictly match "6 columns, 2 rows" the table
-         has a header row and one summary row — however, a
-         more useful and readable interpretation is 6 columns
-         with one header row plus six data rows. Adjust if
-         your instructor specifically means otherwise.
-    ====================================================== */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.95rem;
-    }
-
-    /* Table Header Row */
-    thead tr {
-      background: rgba(0, 255, 135, 0.1);
-    }
-
-    th {
-      padding: 14px 16px;
-      text-align: left;
-      font-size: 0.7rem;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--green);
-      border-bottom: 2px solid var(--border);
-    }
-
-    /* Data rows */
-    tbody tr {
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      transition: background 0.2s ease;   /* smooth hover highlight */
-    }
-
-    tbody tr:hover {
-      background: rgba(0, 255, 135, 0.06);
-    }
-
-    td {
-      padding: 16px 16px;
-      vertical-align: middle;
-    }
-
-    /* Rank number badge */
-    .rank {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.5rem;
-      color: var(--muted);
-      width: 50px;
-    }
-
-    /* Highlight rank 1 in gold */
-    tbody tr:first-child .rank { color: #ffd700; }
-    tbody tr:nth-child(2) .rank { color: #c0c0c0; }
-    tbody tr:nth-child(3) .rank { color: #cd7f32; }
-
-    /* Club name cell */
-    .club-name {
-      font-weight: 600;
-      font-size: 1rem;
-      color: #fff;
-    }
-
-    /* Points column — biggest and brightest */
-    .points {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.6rem;
-      color: var(--green);
-      text-align: right;
-      padding-right: 8px;
-    }
-
-    /* ======================================================
-       SOCIAL MEDIA LINKS SECTION
-       Requirement (iv): Links to YouTube, Facebook, Twitter
-    ====================================================== */
-    .social-section {
-      text-align: center;
-    }
-
-    .social-label {
-      font-size: 0.75rem;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 20px;
-    }
-
-    .social-links {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    /* Each social button */
-    .social-btn {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 14px 28px;
-      border-radius: 50px;
-      text-decoration: none;        /* remove underline */
-      font-weight: 600;
-      font-size: 0.9rem;
-      letter-spacing: 1px;
-      border: 1px solid rgba(255,255,255,0.15);
-      background: rgba(255,255,255,0.06);
-      color: #fff;
-      transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
-    }
-
-    /* Single unified hover rule — lifts button and applies glow */
-    .social-btn:hover {
-      transform: translateY(-4px);         /* lifts the button on hover */
-      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
-      background: rgba(255,255,255,0.1);
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    /* Platform-specific accent colors applied on hover via --accent variable */
-    .social-btn.youtube  { --accent: #ff0000; }
-    .social-btn.facebook { --accent: #1877f2; }
-    .social-btn.twitter  { --accent: #1da1f2; }
-
-    .social-btn i {
-      font-size: 1.2rem;
-    }
-
-    /* ======================================================
-       TABLE SCROLL WRAPPER
-       Allows the table to scroll horizontally on ALL screen
-       sizes where it's too wide to fit. Works on mobile,
-       tablet, and even small desktop windows.
-       overflow-x: auto = show horizontal scrollbar only when needed
-       -webkit-overflow-scrolling: touch = smooth swipe on iOS
-    ====================================================== */
-    .table-scroll {
-      width: 100%;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      border-radius: 8px;
-    }
-
-    /* Scroll hint — hidden by default, shown on mobile via JS */
-    .scroll-hint {
-      display: none;
-      font-size: 0.7rem;
-      color: var(--muted);
-      text-align: right;
-      margin-bottom: 8px;
-      letter-spacing: 1px;
-      font-style: italic;
-    }
-
-    /* ======================================================
-       FOOTER
-    ====================================================== */
-    footer {
-      font-size: 0.75rem;
-      color: var(--muted);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      text-align: center;
-      padding-bottom: 20px;
-    }
-
-    /* ======================================================
-       RESPONSIVE DESIGN — MEDIA QUERIES
-       -------------------------------------------------------
-       HOW RESPONSIVE DESIGN WORKS:
-       A "media query" (@media) is a CSS rule that only
-       activates when a condition is true — such as the screen
-       being narrower than a certain number of pixels.
-
-       Breakpoints used here:
-         • Desktop  → > 768px  (default styles above)
-         • Tablet   → ≤ 768px  (first media query)
-         • Mobile   → ≤ 480px  (second media query)
-
-       The <meta name="viewport"> tag in <head> is what
-       tells mobile browsers to respect these pixel widths
-       instead of zooming out and showing a tiny desktop page.
-    ====================================================== */
-
-    /* ── TABLET & SMALL LAPTOP (max-width: 768px) ───────── */
-    @media (max-width: 768px) {
-
-      /* Reduce wrapper padding on smaller screens */
-      .wrapper {
-        width: 96%;       /* use more of the screen width */
-        gap: 28px;
-        padding: 28px 0 40px;
-      }
-
-      /* Shrink the card padding so content isn't cramped */
-      .card {
-        padding: 20px 16px;
-      }
-
-      /* Table: reduce cell padding so all 6 columns still fit */
-      th, td {
-        padding: 10px 8px;
-        font-size: 0.85rem;
-      }
-
-      /* Shrink rank number so it doesn't crowd the row */
-      .rank {
-        font-size: 1.2rem;
-        width: 36px;
-      }
-
-      /* Slightly smaller points column */
-      .points {
-        font-size: 1.3rem;
-      }
-
-      /* Stack social buttons if they don't all fit in a row */
-      .social-links {
-        gap: 12px;
-      }
-
-      .social-btn {
-        padding: 12px 20px;
-        font-size: 0.85rem;
-      }
-    }
-
-    /* ── MOBILE PHONES (max-width: 480px) ───────────────── */
-    @media (max-width: 480px) {
-
-      /* Give the wrapper a small horizontal padding */
-      .wrapper {
-        width: 100%;
-        padding: 20px 12px 40px;
-        gap: 22px;
-      }
-
-      /* Even smaller card padding */
-      .card {
-        padding: 16px 10px;
-        border-radius: 12px;
-      }
-
-      /* Show the scroll hint on mobile */
-      .scroll-hint {
-        display: block;
-      }
-
-      table {
-        min-width: 420px;   /* prevents columns from getting unreadably thin */
-        font-size: 0.82rem;
-      }
-
-      th, td {
-        padding: 10px 8px;
-        white-space: nowrap;  /* stop text from wrapping inside cells */
-      }
-
-      .rank {
-        font-size: 1.1rem;
-        width: 30px;
-      }
-
-      .club-name {
-        font-size: 0.9rem;
-      }
-
-      .points {
-        font-size: 1.2rem;
-      }
-
-      /* Header: scale text down on mobile */
-      header .eyebrow {
-        font-size: 0.65rem;
-        letter-spacing: 3px;
-      }
-
-      header p {
-        font-size: 0.8rem;
-        letter-spacing: 1px;
-      }
-
-      .card-title {
-        font-size: 1.2rem;
-        letter-spacing: 1px;
-      }
-
-      /* Stack social buttons vertically on very small screens */
-      .social-links {
-        flex-direction: column;    /* stack them top to bottom */
-        align-items: center;
-        gap: 10px;
-      }
-
-      /* Make each button full width for easy tapping */
-      .social-btn {
-        width: 200px;
-        justify-content: center;
-        padding: 14px 16px;
-        font-size: 0.9rem;
-
-        /* Larger tap target for fingers (Apple HIG recommends ≥44px) */
-        min-height: 48px;
-      }
-
-      footer {
-        font-size: 0.65rem;
-        letter-spacing: 1px;
-      }
-    }
-
-    /* ── LARGE DESKTOP (min-width: 1200px) ──────────────── */
-    @media (min-width: 1200px) {
-
-      /* On very wide screens, give even more breathing room */
-      .wrapper {
-        gap: 50px;
-        padding: 60px 0 80px;
-      }
-
-      th, td {
-        padding: 18px 20px;
-        font-size: 1rem;
-      }
-
-      .rank {
-        font-size: 1.7rem;
-      }
-
-      .points {
-        font-size: 1.8rem;
-      }
-
-      .club-name {
-        font-size: 1.05rem;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSC 405 Project - Group 4</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+
+body{
+    margin:0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background:#f39c12; /* SAME ORANGE BACKGROUND */
+}
+
+/* MAIN CONTAINER */
+.container{
+    width:90%;
+    max-width:850px;
+    margin:50px auto;
+    text-align:center;
+}
+
+/* HEADINGS */
+.project-title{
+    font-size:18px;
+    font-weight:bold;
+    color:#111;
+    letter-spacing:1px;
+}
+
+.group{
+    font-size:38px;
+    font-weight:900;
+    margin:5px 0 20px;
+}
+
+/* TABLE CARD */
+.card{
+    background:white;
+    border-radius:15px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.2);
+    overflow:hidden;
+}
+
+/* TABLE HEADER */
+.header-row{
+    display:flex;
+    justify-content:space-between;
+    padding:15px 25px;
+    background:#222;
+    color:white;
+    font-weight:bold;
+    font-size:14px;
+}
+
+/* TEAM ROWS */
+.team{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 25px;
+    border-bottom:1px solid #eee;
+    transition:0.3s;
+}
+
+.team:hover{
+    background:#fdf2e9;
+}
+
+.team:last-child{
+    border-bottom:none;
+}
+
+.club{
+    font-weight:600;
+}
+
+/* POINT BADGE */
+.points{
+    background:#e67e22;
+    color:white;
+    padding:6px 14px;
+    border-radius:30px;
+    font-weight:bold;
+}
+
+/* SOCIAL SECTION */
+.social{
+    margin-top:30px;
+}
+
+.social h3{
+    margin-bottom:10px;
+}
+
+.social button{
+    border:none;
+    padding:10px 18px;
+    margin:5px;
+    border-radius:6px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.tiktok{background:black;color:white;}
+.facebook{background:#1877f2;color:white;}
+.twitter{background:black;color:white;}
+
+.social button:hover{
+    transform:scale(1.05);
+}
+
+/* FOOTER */
+footer{
+    margin-top:25px;
+    font-size:12px;
+}
+
+</style>
 </head>
-
 <body>
 
-  <!-- ============================================================
-       MAIN CONTENT WRAPPER
-       margin: 0 auto on .wrapper centers the page content
-  ============================================================ -->
-  <div class="wrapper">
+<div class="container">
 
-    <!-- ==================== HEADER ==================== -->
-    <!-- Requirement: Title = "CSC 405 Project", Head = "CSC 405" -->
-    <header>
-      <p class="eyebrow">Computer Science Department</p>
-      <!-- This is the page heading as specified -->
-      <h1>CSC 405</h1>
-      <p>Premier League — Top 6 Standings Table</p>
-    </header>
+    <div class="project-title">CSC 405 PROJECT – PREMIER LEAGUE STANDINGS</div>
+    <div class="group">GROUP 4</div>
 
-    <!-- ==================== TABLE CARD ==================== -->
-    <!-- Requirement (i): 6-column table with club names & points -->
     <div class="card">
-      <div class="card-title">📊 Current Top 6 — Live Standings</div>
 
-      <!--
-        TABLE STRUCTURE:
-        ┌────────────────────────────────────────────────────────┐
-        │ Col 1: Rank  │ Col 2: Club │ Col 3: W │ Col 4: D      │
-        │ Col 5: L     │ Col 6: Points                           │
-        └────────────────────────────────────────────────────────┘
-        Row 1 = <thead> header labels
-        Row 2+ = <tbody> data rows for each club
-      -->
-      <!--
-        .table-scroll: On mobile, wraps the table in a
-        horizontally scrollable container so no data is cut off.
-        On desktop this div has no visual effect.
-        The scroll hint below is hidden by default and shown
-        only on screens ≤ 480px via JavaScript below.
-      -->
-      <span id="scrollHint" class="scroll-hint">← swipe to scroll →</span>
+        <div class="header-row">
+            <div>CLUBS</div>
+            <div>POINTS</div>
+        </div>
 
-      <div class="table-scroll">
-      <table>
+        <div class="team">
+            <div class="club">1. Arsenal</div>
+            <div class="points">61</div>
+        </div>
 
-        <!-- TABLE HEADER ROW (Row 1 — Column labels) -->
-        <thead>
-          <tr>
-            <th>#</th>           <!-- Column 1: Rank -->
-            <th>Club</th>        <!-- Column 2: Club Name -->
-            <th>W</th>           <!-- Column 3: Wins -->
-            <th>D</th>           <!-- Column 4: Draws -->
-            <th>L</th>           <!-- Column 5: Losses -->
-            <th style="text-align:right">PTS</th> <!-- Column 6: Points -->
-          </tr>
-        </thead>
+        <div class="team">
+            <div class="club">2. Manchester City</div>
+            <div class="points">58</div>
+        </div>
 
-        <!-- TABLE DATA ROWS (Row 2 — the 6 top clubs) -->
-        <tbody>
+        <div class="team">
+            <div class="club">3. Aston Villa</div>
+            <div class="points">51</div>
+        </div>
 
-          <!-- Club 1: Arsenal FC — 61 points -->
-          <tr>
-            <td class="rank">1</td>
-            <td class="club-name">⚪🔴 Arsenal FC</td>
-            <td>18</td>
-            <td>7</td>
-            <td>3</td>
-            <td class="points">61</td>
-          </tr>
+        <div class="team">
+            <div class="club">4. Manchester United</div>
+            <div class="points">48</div>
+        </div>
 
-          <!-- Club 2: Manchester City — 56 points -->
-          <tr>
-            <td class="rank">2</td>
-            <td class="club-name">🔵 Manchester City</td>
-            <td>17</td>
-            <td>5</td>
-            <td>5</td>
-            <td class="points">56</td>
-          </tr>
+        <div class="team">
+            <div class="club">5. Chelsea</div>
+            <div class="points">45</div>
+        </div>
 
-          <!-- Club 3: Aston Villa — 51 points -->
-          <tr>
-            <td class="rank">3</td>
-            <td class="club-name">🟣 Aston Villa</td>
-            <td>15</td>
-            <td>6</td>
-            <td>6</td>
-            <td class="points">51</td>
-          </tr>
+        <div class="team">
+            <div class="club">6. Liverpool</div>
+            <div class="points">45</div>
+        </div>
 
-          <!-- Club 4: Manchester United — 48 points -->
-          <tr>
-            <td class="rank">4</td>
-            <td class="club-name">🔴 Manchester United</td>
-            <td>13</td>
-            <td>9</td>
-            <td>5</td>
-            <td class="points">48</td>
-          </tr>
+        <div class="team">
+            <div class="club">7. Brentford</div>
+            <div class="points">40</div>
+        </div>
 
-          <!-- Club 5: Chelsea FC — 45 points -->
-          <tr>
-            <td class="rank">5</td>
-            <td class="club-name">🔵 Chelsea FC</td>
-            <td>12</td>
-            <td>9</td>
-            <td>6</td>
-            <td class="points">45</td>
-          </tr>
+        <div class="team">
+            <div class="club">8. AFC Bournemouth</div>
+            <div class="points">38</div>
+        </div>
 
-          <!-- Club 6: Liverpool FC — 45 points -->
-          <tr>
-            <td class="rank">6</td>
-            <td class="club-name">🔴 Liverpool FC</td>
-            <td>13</td>
-            <td>6</td>
-            <td>8</td>
-            <td class="points">45</td>
-          </tr>
+        <div class="team">
+            <div class="club">9. Everton</div>
+            <div class="points">37</div>
+        </div>
 
-        </tbody>
-      </table>
-      </div><!-- /.table-scroll -->
-    </div><!-- /.card -->
+        <div class="team">
+            <div class="club">10. Fulham</div>
+            <div class="points">37</div>
+        </div>
 
-    <!-- ==================== SOCIAL LINKS ==================== -->
-    <!--
-      Requirement (iv): Link YouTube, Facebook, and Twitter
-      Each <a> tag has href pointing to the platform's homepage.
-      target="_blank" opens in a new tab (good UX practice).
-      rel="noopener noreferrer" is a security best practice for
-      external links opened in new tabs.
-    -->
-    <div class="social-section">
-      <p class="social-label">Follow Us On</p>
+    </div>
 
-      <div class="social-links">
+    <div class="social">
+        <h3>FOLLOW US</h3>
+        <button class="tiktok"><i class="fab fa-tiktok"></i> TikTok</button>
+        <button class="facebook"><i class="fab fa-facebook"></i> Facebook</button>
+        <button class="twitter"><i class="fab fa-twitter"></i> Twitter/X</button>
+    </div>
 
-        <!-- YouTube Link -->
-        <a
-          href="https://www.youtube.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="social-btn youtube"
-          title="Visit YouTube"
-        >
-          <i class="fab fa-youtube"></i>
-          YouTube
-        </a>
+    <footer>
+        © 2026 CSC 405 Project – All Rights Reserved
+    </footer>
 
-        <!-- Facebook Link -->
-        <a
-          href="https://www.facebook.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="social-btn facebook"
-          title="Visit Facebook"
-        >
-          <i class="fab fa-facebook-f"></i>
-          Facebook
-        </a>
+</div>
 
-        <!-- Twitter (X) Link -->
-        <a
-          href="https://www.twitter.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="social-btn twitter"
-          title="Visit Twitter"
-        >
-          <i class="fab fa-twitter"></i>
-          Twitter
-        </a>
-
-      </div>
-    </div><!-- /.social-se
+</body>
+</html>
